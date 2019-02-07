@@ -1,0 +1,153 @@
+//add location attribute
+
+3.
+
+INSERT INTO public."Owner" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)
+
+4.
+
+INSERT INTO public."Guests" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)
+
+5.
+SELECT P.id, P.name, P.no_of_guests, P.no_of_beds, O.id, O.name
+	FROM public."Property" AS P 
+	INNER JOIN
+    public."Owner" as O
+	ON P.owner_id = O.id
+	WHERE checkAvailibility($3, $2, P.id)
+	AND P.location_id in
+	(SELECT id FROM public."Location" WHERE country=$1)
+	AND P.no_of_guests>$4;
+
+6.
+
+SELECT P.id, P.name, P.no_of_guests, P.no_of_beds, O.id, O.name
+	FROM public."Property" AS P 
+	INNER JOIN
+    public."Owner" as O
+	ON P.owner_id = O.id
+	WHERE P.location_id in
+	(SELECT id FROM public."Location" WHERE country=$1) LIMIT 10;
+
+
+7. placeReview(5, 'godplace', 3, 1, 2);
+
+8. (guest books) // verify when booking //trigger to add $$$ to owner
+
+
+CREATE OR REPLACE FUNCTION bookGuest(cid DATE, cod DATE, pid INT, uname VARCHAR, pwd VARCHAR)
+RETURNS BOOLEAN
+AS $$
+ 
+BEGIN
+	IF checkAvailibility(cid, cod, pid) AND 
+		pwd in (SELECT G.password FROM public."Guests" as G
+					WHERE uname=G.username) THEN
+		INSERT INTO public."Booking" (check_in_date, check_out_date, property_id, booked_by)
+		VALUES (cid, cod, pid, 
+				(SELECT id from public."Guests" as G 
+				 WHERE uname=G.username));
+		RETURN true;
+	END IF;
+	RETURN false;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+
+9. 
+DELETE FROM public."Booking" WHERE id = $1
+
+10.
+// IF hotel
+SELECT services_expenses FROM public."HOTEL" as H
+	WHERE H.prop_id in 
+		(SELECT prop_id FROM public."Booking" as B
+		WHERE B.id = $1)
+
+11. trigger
+
+
+
+12.
+
+SELECT name, description, contact, location 
+FROM public."Guests"
+WHERE id = $1
+
+13.
+
+SELECT name, description, contact, location 
+FROM public."Owner"
+WHERE id = $1
+
+14. // FUNCTION TO CHECK AVAILIBILITY
+
+CREATE OR REPLACE FUNCTION checkAvailibility(cid DATE, cod DATE, pid INT)
+RETURNS BOOLEAN
+AS $$
+BEGIN
+	RETURN cid < cod AND ((SELECT COUNT(*) FROM public."Booking" as B
+	WHERE (B.property_id=pid AND (cid<check_out_date AND cod>check_in_date))) = 0);			  
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+//UNION  ETA BAKI ASE
+
+
+CREATE OR REPLACE FUNCTION retrieveALL(locationInput VARCHAR)
+RETURNS TABLE (
+ id INT,
+ name VARCHAR,
+ description VARCHAR,
+ amenities VARCHAR,
+ price INT,
+ no_of_guests INT,
+ no_of_beds INT,
+ location_id INT,
+ owner_id INT,
+ type INT,
+ ownerName VARCHAR
+) 
+AS $$
+BEGIN
+   RETURN QUERY select prop.id, prop.name, prop.description, prop.amenities, prop.price, prop.no_of_guests, prop.no_of_beds, prop.location_id, prop.owner_id, prop.type, owner.name
+from public."Property" as prop, public."Owner" as owner
+where prop.location_id in (select loc.id
+		     from public."Location" as loc
+		     where country= locationInput) 
+			 AND prop.owner_id = owner.id;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION placeReview(r INT, d VARCHAR, t INT, idFrom INT, idTo INT)
+RETURNS INTEGER
+AS $$
+DECLARE
+ revID INTEGER := 'rev_id'::regclass;
+BEGIN
+   INSERT INTO public."Review" (id,rating, description, type) VALUES (revID,r,d,t);
+   
+	IF t=1 THEN
+	INSERT INTO public."ReviewOfGuest" (rev_id, guest_id, owner_id) VALUES (revID, idTo, idFrom);
+	RETURN 1;
+	ELSEIF t=2 THEN
+	INSERT INTO public."ReviewOfProperty" (rev_id, prop_id, guest_id) VALUES (revID, idTo, idFrom);
+	RETURN 1;
+	ELSE
+	INSERT INTO public."ReviewOfOwner" (rev_id, owner_id, prop_id) VALUES (revID, idTo, idFrom);
+	RETURN 1;
+	END IF;
+
+   RETURN 0;
+	
+END;
+$$ LANGUAGE plpgsql;

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+
+
+    <div class="row red lighten-1">
+        <div class="container">
+            <h3 class="col s8">INSERT LOGO HERE</h3>
+            <a class="col s2" href="login.html?type=guest" style="margin-top: 20px">
+            <button class="btn waves-effect waves-light" type="submit">Guest Login
+            </button>
+            </a>
+            <a class="col s2" href="login.html?type=owner" style="margin-top: 20px">
+            <button class="btn waves-effect waves-light" type="submit">Owner Login
+            </button>
+            </a>
+
+        </div>
+    </div>
+    <div class="container">
+    <div class="row">
+        <form class="col s6" action="search.html">
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="location" placeholder="Location" id="location" type="text" class="validate">
+                    <label for="location">Location</label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="check-in-date" placeholder="Check In Date" type="text" class="datepicker">
+                </div>
+                <div class="input-field col s6">
+                    <input name="check-out-date" placeholder="Check Out Date" type="text" class="datepicker">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input name="guests" placeholder="Guests" id="guests" type="number" class="validate">
+                    <label for="guests">Guests</label>
+                </div>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit">Search
+
+            </button>
+
+
+        </form>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="js/materialize.min.js"></script>
+<script src="fetch.js"></script>
+<script src="datePicker.js"></script>
+</body>
+
+</html><h1 id="name" style="color: blue"></h1>
