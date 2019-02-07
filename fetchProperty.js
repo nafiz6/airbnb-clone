@@ -1,33 +1,55 @@
 
-var form = document.getElementById("ownerForm")
+var names = document.getElementById("property-names");
 
 
 
 //Get by id
-var getOwner = async ()=>{
+var getProperty = async ()=>{
     var currURL = new URL(window.location.href);
-    var url = 'http://localhost:3000/property/'+currURL.searchParams.get("id");
+    var loc = currURL.searchParams.get("location");
+    var cid = currURL.searchParams.get("check_in_date");
+    var cod = currURL.searchParams.get("check_out_date");
+    var guests = currURL.searchParams.get("guests");
+
+    var url = 'http://localhost:3000/property/'+loc+'/'+cid+'/'+cod+'/'+guests;
     var r = await fetch(url).then(function(response) {
         return response.json();
     })
         .then(function(myJson) {
-            console.log(JSON.stringify(myJson));
-            header.innerText = JSON.stringify(myJson[0].name);
+            for (var i=0;i<myJson.length;i++){
+                var card_horizontal = document.createElement("div");
+                card_horizontal.className = "card horizontal";
+                var card_stacked = document.createElement("div");
+                card_stacked.className = "card-stacked";
+                var card_content = document.createElement("div");
+                card_content.className = "card-content";
+                var p = document.createElement("p");
+                var type;
+                if (JSON.stringify(myJson[i].type) == "1")type="Apartment";
+                if (JSON.stringify(myJson[i].type) == "2")type="Resort";
+                if (JSON.stringify(myJson[i].type) == "3")type="Hotel";
+                p.innerText = type;
+                var h4 = document.createElement("h4");
+                h4.innerText = JSON.stringify(myJson[i].prop_name).replace(/['"]+/g, '');
+                var h6 = document.createElement("h6");
+                h6.innerText = "Tk. "+ JSON.stringify(myJson[i].price);
+                card_horizontal.appendChild(card_stacked);
+                card_stacked.appendChild(card_content);
+                card_content.appendChild(p);
+                card_content.appendChild(h4);
+                card_content.appendChild(h6);
+                var a = document.createElement("a");
+                a.href = "property.html?id="+myJson[i].prop_id + "&cid=" + cid + "&cod=" + cod;
+                a.style.color = "black";
+                a.appendChild(card_horizontal);
+                names.appendChild(a);
+            }
+
         })
-        .catch(error => header.innerText = "ID does not exist");
+        .catch(error =>  header.innerText = "No properties found");
 }
 
-document.getElementById("submitOwner").addEventListener("click", function (ev) {
-    event.preventDefault();
-    getOwner();
-})
+getProperty();
 
 
 
-var names = document.getElementById("ownerNames");
-
-for (var i=0;i<10;i++)
-{
-    var header = document.createElement("h1");
-    names.appendChild(header);
-}

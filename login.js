@@ -3,7 +3,7 @@ var signup = document.getElementById("signup")
 var url = new URL(window.location.href);
 
 signup.href = "signup.html?type=" + url.searchParams.get("type")
-signup.value
+
 
 function getFormData($form){
     var unindexed_array = $form.serializeArray();

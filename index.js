@@ -19,6 +19,8 @@ app.get('/user/', (request,response)=>{
 
 app.get('/owner/:id', db.getOwner)
 
+app.get('/property/:location/:check_in_date/:check_out_date/:guests', db.getPropertyByAll)
+
 app.post('/signup/guest', db.signupGuest)
 
 

@@ -98,6 +98,14 @@ $$ LANGUAGE plpgsql;
 
 
 //UNION  ETA BAKI ASE
+SELECT P.name, P.description, P.amenities, P.price, P.no_of_guests, P.no_of_beds, P.owner_id, P.type, L.country, O.name
+FROM public."Property" as P
+INNER JOIN public."Owner" as O
+ON P.owner_id = O.id
+INNER JOIN public."Location" as L
+ON P.location_id = L.id
+WHERE P.id = $1
+
 
 
 CREATE OR REPLACE FUNCTION retrieveALL(locationInput VARCHAR)
