@@ -8,24 +8,67 @@
 </head>
 
 <body>
+<nav>
+    <div class="container">
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Insert Logo Here</a>
 
+        </div>
+    </div>
+</nav>
 <div class="container">
     <div class="row">
-        <form class="col s12" id="ownerForm" >
+        <div class="col s12 m7"  id="bookings">
 
+        </div>
+
+
+    </div>
+        <h3>Add New Property</h3>
+
+        <form class="col s6" id="addProperty">
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="propName" placeholder="Property Name" id="propName" type="text" class="validate">
+                    <label for="propName">Name</label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="description" placeholder="Description" id="description" type="text" class="validate">
+                    <label for="description">Description</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="amenities" placeholder="Amenities" id="amenities" type="text" class="validate">
+                    <label for="amenities">Amenities</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="price" placeholder="Price" id="price" type="number" class="validate">
+                    <label for="price">Contact</label>
+                </div>
+            </div>
+            
+
+            <button class="btn waves-effect waves-light" type="submit">Create account
+
+            </button>
 
 
         </form>
-    </div>
 
-    <div id="ownerNames"></div>
+
 </div>
 
 
 
 
 <script type="text/javascript" src="js/materialize.min.js"></script>
-<script src="fetch.js"></script>
+<script src="owner.js"></script>
 <script src="datePicker.js"></script>
 </body>
 

@@ -6,24 +6,15 @@ const pool = new Pool({
     database: 'airbnb'
 })
 
-const getOwner = (request, response) => {
-    id = parseInt(request.params.id)
-    pool.query('SELECT * FROM public."Owner" WHERE id = $1', [id], (error, results)=> {
-        if (error){
-            console.log(error)
-            response.send(error);
-        }
-        else{
-            response.send(results.rows)
-    }
-    });
-}
-
 const signupGuest = (request, response)=>{
     var name = request.body.name;
+    var description = request.body.description;
+    var contact = request.body.contact;
+    var location = request.body.location;
     var username = request.body.username;
     var password = request.body.password;
-    pool.query('INSERT INTO public."Guests" (name, username,password) VALUES ($1, $2, $3)', [name, username, password], (error, results) => {
+    pool.query('INSERT INTO public."Guests" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)',
+        [name, description, contact, location,username, password], (error, results) => {
         if (error) {
             console.log(error);
             response.send(error);
@@ -33,6 +24,68 @@ const signupGuest = (request, response)=>{
     }
     })
 }
+const signupOwner = (request, response)=>{
+    var name = request.body.name;
+    var description = request.body.description;
+    var contact = request.body.contact;
+    var location = request.body.location;
+    var username = request.body.username;
+    var password = request.body.password;
+    pool.query('INSERT INTO public."Owner" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)'
+        , [name, description, contact, location, username, password], (error, results) => {
+        if (error) {
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            response.status(201).send(`User added with ID: ${results.insertId}`)
+    }
+    })
+}
+
+const loginOwner = (request, response)=>{
+    var username = request.body.username;
+    var password = request.body.password;
+    pool.query('SELECT id FROM public."Owner" WHERE (username=$1 AND password = $2)'
+        , [username, password], (error, results) => {
+        if (error) {
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            response.send(results.rows);
+    }
+    })
+}
+
+
+const ownerBookings = (request, response)=>{
+    var ownerId = parseInt(request.params.id)
+    pool.query('SELECT B.id AS booking_id,  to_char(B.check_in_date, \'DD-Mon-YYYY\') as check_in_date, ' +
+        'to_char(B.check_out_date, \'DD-Mon-YYYY\') as check_out_date, P.name AS prop_name, G.name as booked_by, T.owing, T.paid' +
+        ' FROM public."Booking" AS B' +
+        ' INNER JOIN' +
+        ' public."Property" AS P' +
+        ' ON P.id = B.property_id' +
+        ' LEFT OUTER JOIN' +
+        ' public."Transaction" AS T' +
+        ' ON (T.booking_id = B.id)' +
+        ' INNER JOIN' +
+        ' public."Guests" AS G ON G.id = B.booked_by' +
+        ' WHERE P.owner_id = $1'
+        ,[ownerId], (error, results) => {
+        if (error) {
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows);
+    }
+    })
+}
+
+
 
 const getPropertyByAll = (request, response)=>{
     var cid = request.params.check_in_date.toString();
@@ -65,7 +118,9 @@ const getPropertyByAll = (request, response)=>{
 }
 
 module.exports ={
-    getOwner,
     signupGuest,
-    getPropertyByAll
+    signupOwner,
+    loginOwner,
+    getPropertyByAll,
+    ownerBookings
 }

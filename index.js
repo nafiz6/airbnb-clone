@@ -17,11 +17,14 @@ app.get('/user/', (request,response)=>{
     response.json({ info: 'HI SOMEK'})
 })
 
-app.get('/owner/:id', db.getOwner)
+app.get('/ownerbookings/:id', db.ownerBookings)
 
 app.get('/property/:location/:check_in_date/:check_out_date/:guests', db.getPropertyByAll)
 
 app.post('/signup/guest', db.signupGuest)
+app.post('/signup/owner', db.signupOwner)
+app.post('/login/owner', db.loginOwner)
+
 
 
 app.listen(port, () =>{

@@ -1,14 +1,14 @@
 //add location attribute
 
-3.
+3. DONE
 
 INSERT INTO public."Owner" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)
 
-4.
+4. DONE
 
 INSERT INTO public."Guests" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)
 
-5.
+5. DONE
 SELECT P.id, P.name, P.no_of_guests, P.no_of_beds, O.id, O.name
 	FROM public."Property" AS P 
 	INNER JOIN
@@ -17,7 +17,7 @@ SELECT P.id, P.name, P.no_of_guests, P.no_of_beds, O.id, O.name
 	WHERE checkAvailibility($3, $2, P.id)
 	AND P.location_id in
 	(SELECT id FROM public."Location" WHERE country=$1)
-	AND P.no_of_guests>$4;
+	AND P.no_of_guests>=$4;
 
 6.
 
@@ -94,11 +94,18 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+15. GetReview
+
+SELECT * FROM public."Review" as R
+INNER JOIN public."ReviewOfProperty" as ROP
+ON R.id = ROP.rev_id
+WHERE ROP.prop_id =$1
+
 
 
 
 //UNION  ETA BAKI ASE
-SELECT P.name, P.description, P.amenities, P.price, P.no_of_guests, P.no_of_beds, P.owner_id, P.type, L.country, O.name
+SELECT P.name, P.description, P.amenities, P.price, P.no_of_guests, P.no_of_beds, P.owner_id, P.type, L.country, L.city, O.name
 FROM public."Property" as P
 INNER JOIN public."Owner" as O
 ON P.owner_id = O.id

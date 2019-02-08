@@ -10,23 +10,23 @@
 <body>
 
 
-    <div class="row red lighten-1">
-        <div class="container">
-            <h3 class="col s8">INSERT LOGO HERE</h3>
-            <a class="col s2" href="login.html?type=guest" style="margin-top: 20px">
-            <button class="btn waves-effect waves-light" type="submit">Guest Login
-            </button>
-            </a>
-            <a class="col s2" href="login.html?type=owner" style="margin-top: 20px">
-            <button class="btn waves-effect waves-light" type="submit">Owner Login
-            </button>
-            </a>
-
+<nav>
+    <div class="container">
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Logo</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="login.html?type=owner">Owner Login</a></li>
+                <li><a href="login.html?type=guest">Guest Login</a></li>
+            </ul>
         </div>
     </div>
-    <div class="container">
+</nav>
+    <div class="container" style="margin-top: 50px">
+        <div class="row">
+            <h5 id="result"></h5>
+        </div>
     <div class="row">
-        <form class="col s6" action="search.html">
+        <form class="col s6" id="login" >
             <div class="row">
                 <div class="input-field col s6">
                     <input name="username" placeholder="Username" id="username" type="text" class="validate">
@@ -39,12 +39,12 @@
                     <label for="password">Password</label>
                 </div>
             </div>
-            <button class="btn waves-effect waves-light" type="submit">Login
+            <button class="btn waves-effect waves-light red lighten-2" type="submit">Login as Guest
 
             </button>
             <div class="row">
                 <a class="col s4" id="signup" href="" style="margin-top: 20px">
-                    <button class="btn waves-effect waves-light" type="submit">Create Account
+                    <button class="btn waves-effect waves-light red lighten-2" type="submit">Create Account
                     </button>
                 </a>
             </div>
@@ -58,7 +58,8 @@
 
 
 <script type="text/javascript" src="js/materialize.min.js"></script>
-<script src="fetch.js"></script>
+<script src="jquery-3.3.1.min.js"></script>
+<script src="login.js"></script>
 <script src="datePicker.js"></script>
 </body>
 
