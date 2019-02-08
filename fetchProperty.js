@@ -1,7 +1,7 @@
 
 var names = document.getElementById("property-names");
 
-
+var result = document.getElementById("result");
 
 //Get by id
 var getProperty = async ()=>{
@@ -10,8 +10,10 @@ var getProperty = async ()=>{
     var cid = currURL.searchParams.get("check_in_date");
     var cod = currURL.searchParams.get("check_out_date");
     var guests = currURL.searchParams.get("guests");
+    if (guests==null)guests=0;
 
     var url = 'http://localhost:3000/property/'+loc+'/'+cid+'/'+cod+'/'+guests;
+    if (cid==null || cid=="")url =  'http://localhost:3000/property/'+loc;
     var r = await fetch(url).then(function(response) {
         return response.json();
     })
@@ -46,7 +48,7 @@ var getProperty = async ()=>{
             }
 
         })
-        .catch(error =>  header.innerText = "No properties found");
+        .catch(error =>  result.innerText = "No properties found");
 }
 
 getProperty();

@@ -1,6 +1,10 @@
 
 var form = document.getElementById("login")
 
+var currURL = new URL(window.location.href);
+var sub = document.getElementById("submit");
+sub.innerText= "Login as " + currURL.searchParams.get("type")
+
 function getFormData($form){
     var unindexed_array = $form.serializeArray();
     var indexed_array = {};

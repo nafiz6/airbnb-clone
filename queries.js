@@ -57,6 +57,20 @@ const loginOwner = (request, response)=>{
     }
     })
 }
+const loginGuest = (request, response)=>{
+    var username = request.body.username;
+    var password = request.body.password;
+    pool.query('SELECT id FROM public."Guests" WHERE (username=$1 AND password = $2)'
+        , [username, password], (error, results) => {
+        if (error) {
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            response.send(results.rows);
+    }
+    })
+}
 
 
 const ownerBookings = (request, response)=>{
@@ -74,6 +88,33 @@ const ownerBookings = (request, response)=>{
         ' public."Guests" AS G ON G.id = B.booked_by' +
         ' WHERE P.owner_id = $1'
         ,[ownerId], (error, results) => {
+        if (error) {
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows);
+    }
+    })
+}
+
+const guestBookings = (request, response)=>{
+    var guestId = parseInt(request.params.id)
+    pool.query('SELECT B.id AS booking_id,  to_char(B.check_in_date, \'DD-Mon-YYYY\') as check_in_date, ' +
+        'to_char(B.check_out_date, \'DD-Mon-YYYY\') as check_out_date, P.name AS prop_name, P.id AS prop_id, O.id as owner_id O.name as owner_name, T.owing, T.paid' +
+        ' FROM public."Booking" AS B' +
+        ' INNER JOIN' +
+        ' public."Property" AS P' +
+        ' ON P.id = B.property_id' +
+        ' LEFT OUTER JOIN' +
+        ' public."Transaction" AS T' +
+        ' ON (T.booking_id = B.id)' +
+        ' INNER JOIN' +
+        ' public."Owner" AS O ' +
+        ' ON O.id = P.owner_id '+
+        ' WHERE B.booked_by = $1'
+        ,[guestId], (error, results) => {
         if (error) {
             console.log(error);
             response.send(error);
@@ -116,11 +157,37 @@ const getPropertyByAll = (request, response)=>{
     });
 
 }
+const getPropertyByLocation = (request, response)=>{
+    var loc = request.params.location;
+
+    pool.query('SELECT P.id AS prop_id, P.name as prop_name , P.no_of_beds, P.type,P.price, O.id AS owner_id, O.name as owner_name' +
+        ' FROM public."Property" AS P' +
+        ' INNER JOIN' +
+        ' public."Owner" as O' +
+        ' ON P.owner_id = O.id' +
+        ' WHERE P.location_id in' +
+        ' (SELECT id FROM public."Location" WHERE country=$1)'
+        , [loc], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows);
+        }
+    });
+
+}
 
 module.exports ={
     signupGuest,
     signupOwner,
     loginOwner,
+    loginGuest,
     getPropertyByAll,
-    ownerBookings
+    getPropertyByLocation,
+    ownerBookings,
+    guestBookings
 }

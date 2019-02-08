@@ -8,23 +8,19 @@
 </head>
 
 <body>
-
-
-    <div class="row red lighten-1">
-        <div class="container">
-            <h3 class="col s8">INSERT LOGO HERE</h3>
-            <a class="col s2" href="login.html?type=guest" style="margin-top: 20px">
-            <button class="btn waves-effect waves-light" type="submit">Guest Login
-            </button>
-            </a>
-            <a class="col s2" href="login.html?type=owner" style="margin-top: 20px">
-            <button class="btn waves-effect waves-light" type="submit">Owner Login
-            </button>
-            </a>
-
-        </div>
+<nav>
+<div class="container">
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo">Logo</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="login.html?type=owner">Owner Login</a></li>
+            <li><a href="login.html?type=guest">Guest Login</a></li>
+        </ul>
     </div>
-    <div class="container">
+    </div>
+</div>
+</nav>
+    <div class="container" style="margin-top: 50px">
     <div class="row">
         <form class="col s6" action="search.html">
             <div class="row">
@@ -48,7 +44,7 @@
                     <label for="guests">Guests</label>
                 </div>
             </div>
-            <button class="btn waves-effect waves-light" type="submit">Search
+            <button class="btn waves-effect waves-light red lighten-2" type="submit">Search
 
             </button>
 
