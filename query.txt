@@ -101,19 +101,41 @@ INNER JOIN public."ReviewOfProperty" as ROP
 ON R.id = ROP.rev_id
 WHERE ROP.prop_id =$1
 
+16. not Reviewed owner
+SELECT O.id as owner_id, O.name as owner_name
+FROM public."Owner" AS O
+WHERE O.id not in (Select  R.owner_id
+				   FROM public."ReviewOfOwner" as R
+				   WHERE R.guest_id=3)
+	  AND O.id in (SELECT P.owner_id 
+				  FROM public."Property"as P
+				  WHERE P.id in (SELECT B.property_id
+								FROM public."Booking" as B
+								where B.booked_by = 3))
 
 
+17. Retrieve Review
+SELECT R.rating, R.description, R.date, G.name
+FROM public."Review" AS R, public."Guests" AS G
+WHERE R.id in (SELECT ROP.rev_id 
+			  FROM public."ReviewOfProperty" AS ROP
+			  WHERE ROP.prop_id = 10 AND G.id=ROP.guest_id) 
+			  
+			  
+			 
 
 //UNION  ETA BAKI ASE
-SELECT P.name, P.description, P.amenities, P.price, P.no_of_guests, P.no_of_beds, P.owner_id, P.type, L.country, L.city, O.name
-FROM public."Property" as P
-INNER JOIN public."Owner" as O
-ON P.owner_id = O.id
-INNER JOIN public."Location" as L
-ON P.location_id = L.id
-WHERE P.id = $1
-
-
+SELECT P.name as propName, L.country, L.city, P.description, P.amenities,
+	P.price, P.no_of_guests, P.no_of_beds, O.name as owner_name,
+	O.id as owner_id, O.description
+	FROM public."Property" AS P
+	LEFT OUTER JOIN public."Owner" AS O
+	ON P.owner_id = O.id
+	LEFT OUTER JOIN public."Location" AS L
+	ON P.location_id = L.id
+	WHERE P.id = 8
+	
+	
 
 CREATE OR REPLACE FUNCTION retrieveALL(locationInput VARCHAR)
 RETURNS TABLE (
@@ -147,7 +169,7 @@ CREATE OR REPLACE FUNCTION placeReview(r INT, d VARCHAR, t INT, idFrom INT, idTo
 RETURNS INTEGER
 AS $$
 DECLARE
- revID INTEGER := 'rev_id'::regclass;
+ revID INTEGER := nextval('rev_id'::regclass);
 BEGIN
    INSERT INTO public."Review" (id,rating, description, type) VALUES (revID,r,d,t);
    
@@ -158,7 +180,7 @@ BEGIN
 	INSERT INTO public."ReviewOfProperty" (rev_id, prop_id, guest_id) VALUES (revID, idTo, idFrom);
 	RETURN 1;
 	ELSE
-	INSERT INTO public."ReviewOfOwner" (rev_id, owner_id, prop_id) VALUES (revID, idTo, idFrom);
+	INSERT INTO public."ReviewOfOwner" (rev_id, owner_id, guest_id) VALUES (revID, idTo, idFrom);
 	RETURN 1;
 	END IF;
 

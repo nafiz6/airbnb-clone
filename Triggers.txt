@@ -1,0 +1,18 @@
+2. Transaction Update Trigger :
+
+CREATE OR REPLACE FUNCTION transaction_trigger_func () RETURNS trigger AS $bleh$
+DECLARE 
+taka INTEGER;
+BEGIN
+taka = (SELECT earnings FROM public."Owner" WHERE id = NEW.owner_id);
+UPDATE public."Owner"
+SET earnings = taka + NEW.paid
+WHERE id = NEW.owner_id;
+RETURN NEW;
+END;
+$bleh$
+LANGUAGE plpgsql; 
+
+
+CREATE TRIGGER transaction_trigger AFTER UPDATE ON public."Transaction"
+FOR EACH ROW EXECUTE PROCEDURE transaction_trigger_func();

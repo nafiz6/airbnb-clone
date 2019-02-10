@@ -11,7 +11,7 @@
 <nav>
     <div class="container">
         <div class="nav-wrapper">
-            <a href="#" class="brand-logo">Insert Logo Here</a>
+            <a href="#" class="brand-logo">AirBnB</a>
 
         </div>
     </div>
@@ -34,11 +34,93 @@
         </form>
     </div>
     <div class="row">
-        <div class="col s12 m7"  id="property-names">
+        <div class="col s12 m8">
+            <div class="row">
+                <div class="col s12 m10">
+                    <h4 id="propName">The Palace</h4>
+                    <p id="propLocation">Dhaka</p>
+                    <p id="propSize">2 beds</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m10">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title" id="ownerName">Owner Name</span>
+                            <p id="ownerDescription">I am a very simple card. I am good at containing small bits of information.
+                                I am convenient because I require little markup to use effectively.</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="#" id="linkToOwnerProfile">View Owner Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m10">
+                    <h6>Description</h6>
+                    <p id="propDetails">
+                        I am convenient because I require little markup to use e
+                    </p>
+                    <div class="divider"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12 m10">
+                    <h6>Amenities</h6>
+                    <p id="propAmenities">
+                        I am convenient because I require little markup to use e
+                    </p>
+                    <div class="divider"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12 m10">
+                    <h6 id="propRating">Rating: </h6>
+                    <div class="divider"></div>
+                    <ul id="propReviews" class="collection">
+
+                    </ul>
+                </div>
+            </div>
+
 
         </div>
+        <div class="col s12 m4">
+            <h4>Place a booking:</h4>
+            <form class="col s10" id="book">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="checkInDate" name="check_in_date" placeholder="Check In Date" type="text" class="datepicker">
+                    </div>
+                    <div class="input-field col s12">
+                        <input id="checkOutDate" name="check_out_date" placeholder="Check Out Date" type="text" class="datepicker">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input name="username" placeholder="Username" id="username" type="text" class="validate">
+                        <label for="username">Username</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input name="password" placeholder="Password" id="password" type="password" class="validate">
+                        <label for="password">Password</label>
+                    </div>
+                </div>
+
+                <button class="btn waves-effect waves-light red lighten-2" type="submit">Book Now
+
+                </button>
 
 
+            </form>
+
+            <h6 class="col s12 m12" id="error"></h6>
+        </div>
     </div>
 </div>
 
@@ -46,7 +128,9 @@
 
 
 <script type="text/javascript" src="js/materialize.min.js"></script>
-<script src="fetchProperty.js"></script>
+
+<script src="jquery-3.3.1.min.js"></script>
+<script src="property.js"></script>
 <script src="datePicker.js"></script>
 </body>
 

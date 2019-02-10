@@ -2,6 +2,19 @@
 var bookings = document.getElementById("bookings");
 
 
+var form = document.getElementById("addProperty")
+
+function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+
+    return indexed_array;
+}
+
 
 //Get by id
 var getBookings = async ()=>{
@@ -42,5 +55,42 @@ var getBookings = async ()=>{
 
 getBookings();
 
+
+form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    addProperty();
+
+})
+
+
+
+var addProperty = async ()=>{
+    var data = getFormData($("#addProperty"));
+    var currURL = new URL(window.location.href);
+    var url = 'http://localhost:3000/addproperty/';
+    data["ownerId"] = currURL.searchParams.get("id");
+    var r = await fetch(url, {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(function(response) {
+        return response.json();
+    })
+        .then(function(myJson) {
+            console.log(myJson);
+
+        })
+        .catch(error =>{
+        console.log(error);
+});
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems, {});
+});
 
 

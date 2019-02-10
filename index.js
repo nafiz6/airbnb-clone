@@ -18,7 +18,14 @@ app.get('/user/', (request,response)=>{
 })
 
 app.get('/ownerbookings/:id', db.ownerBookings)
+app.get('/getpropertydetails/:id', db.getPropertyDetails)
+app.get('/getpropertyreview/:id', db.getPropertyReview)
 app.get('/guestbookings/:id', db.guestBookings)
+app.get('/lefttoreview/:id', db.leftToReview)
+app.get('/lefttoreviewowner/:id', db.leftToReviewOwner)
+app.post('/review/', db.review)
+app.post('/addproperty/', db.addProperty)
+app.post('/book/', db.placeBooking)
 
 app.get('/property/:location/:check_in_date/:check_out_date/:guests', db.getPropertyByAll)
 app.get('/property/:location', db.getPropertyByLocation)

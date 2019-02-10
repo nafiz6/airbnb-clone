@@ -53,9 +53,44 @@
                     <label for="price">Price</label>
                 </div>
             </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="guest" placeholder="Guests" id="guest" type="number" class="validate">
+                    <label for="guest">Number of Guests</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input name="bed" placeholder="Beds" id="beds" type="number" class="validate">
+                    <label for="beds">Number of beds</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <select id="type" form="addProperty" name="type">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="1">Apartment</option>
+                        <option value="2">Resort</option>
+                        <option value="3">Hotel</option>
+                    </select>
+                    <label>Select Type</label>
+                </div>
+            </div><div class="row">
+                <div class="input-field col s6">
+                    <select id="location" form="addProperty" name="location">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="1">Bangladesh</option>
+                        <option value="2">India</option>
+                        <option value="3">Australia</option>
+                        <option value="4">Egypt</option>
+                        <option value="5">Canada</option>
+                        <option value="6">Spain</option>
+                    </select>
+                    <label>Select Location</label>
+                </div>
+            </div>
 
-
-            <button class="btn waves-effect waves-light" type="submit">Create account
+            <button class="btn waves-effect waves-light" type="submit">Add property
 
             </button>
 
@@ -69,6 +104,8 @@
 
 
 <script type="text/javascript" src="js/materialize.min.js"></script>
+
+<script src="jquery-3.3.1.min.js"></script>
 <script src="owner.js"></script>
 <script src="datePicker.js"></script>
 </body>
