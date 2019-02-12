@@ -82,9 +82,10 @@ const addProperty = (request, response)=>{
     var type = request.body.type;
     var propName = request.body.propName;
     var ownerId = request.body.ownerId;
+    var p = request.body.package;
     pool.query('INSERT INTO public."Property" (name, description, amenities, price, no_of_guests,' +
-        ' no_of_beds, location_id, owner_id, type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
-        , [propName, description, amenities, price, guest, bed, location, ownerId, type ], (error, results) => {
+        ' no_of_beds, location_id, owner_id, type, package_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);'
+        , [propName, description, amenities, price, guest, bed, location, ownerId, type, p ], (error, results) => {
         if (error) {
             console.log(error);
             response.send(error);
@@ -93,7 +94,12 @@ const addProperty = (request, response)=>{
             response.send(results.rows);
     }
     })
+
+
+
+
 }
+
 
 
 const ownerBookings = (request, response)=>{
@@ -149,9 +155,25 @@ const guestBookings = (request, response)=>{
     })
 }
 
+
+const guestPay = (request, response)=>{
+    var guestID = parseInt(request.params.id)
+    pool.query('Update public."Transaction" ' +
+        'SET paid=owing, owing =0 WHERE booking_id=$1', [guestID], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows)
+        }
+    })
+}
+
 const getPropertyDetails = (request, response)=>{
     var propId = parseInt(request.params.id)
-    pool.query('SELECT P.name as propName, L.country, L.city, P.description AS prop_desc, P.amenities,' +
+    pool.query('SELECT P.name as propName, L.country, L.city, P.description AS prop_desc, P.amenities, P.package_id as packid,' +
         '    P.price, P.no_of_guests, P.no_of_beds, O.name as owner_name,' +
         '    O.id as owner_id, O.description AS owner_desc' +
         '    FROM public."Property" AS P' +
@@ -216,6 +238,22 @@ const leftToReview = (request, response)=>{
     })
 }
 
+const getPropertyByOwner = (request, response)=>{
+    var ownerId = parseInt(request.params.id);
+    pool.query('SELECT name ' +
+        'FROM public."Property" WHERE owner_id= $1',
+        [ownerId], (error, results)=> {
+            if (error) {
+                console.log(error);
+                response.send(error);
+            }
+            else{
+                console.log(results.rows)
+                response.send(results.rows);
+            }
+        })
+}
+
 const leftToReviewOwner = (request, response)=>{
     var guestId = parseInt(request.params.id);
     pool.query('SELECT O.id as owner_id, O.name as owner_name' +
@@ -240,6 +278,30 @@ const leftToReviewOwner = (request, response)=>{
     })
 }
 
+const leftToReviewGuest = (request, response)=>{
+    var ownerId = parseInt(request.params.id);
+    pool.query('SELECT G.id as guest_id, G.name as guest_name' +
+        '    FROM public."Guests" AS G' +
+        '    WHERE G.id not in (Select  R.guest_id' +
+        '    FROM public."ReviewOfGuest" as R' +
+        '    WHERE R.owner_id=$1) AND' +
+        '    G.id IN (SELECT B.booked_by' +
+        '    FROM public."Booking" AS B' +
+        '    WHERE property_id IN (SELECT P.id' +
+        '    FROM public."Property" AS P' +
+        '    WHERE P.owner_id = $1))',
+        [ownerId], (error, results)=> {
+        if (error) {
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+        response.send(results.rows);
+        }
+    })
+}
+
 
 const placeBooking = (request, response)=>{
     var cid = request.body.check_in_date.toString();
@@ -247,10 +309,28 @@ const placeBooking = (request, response)=>{
     var loc = request.body.id;
     var username = request.body.username;
     var password = request.body.password;
+    var packid = request.body.packid;
 
 
 
-    pool.query('SELECT * FROM bookGuest($1, $2, $3, $4, $5 )', [cid,cod,loc,username,password], (error, results)=>{
+    pool.query('SELECT * FROM bookGuest($1, $2, $3, $4, $5, $6)', [cid,cod,loc,username,password, packid], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows);
+        }
+    });
+
+}
+
+const getPackage = (request, response)=>{
+    var packid = request.params.id;
+    console.log(packid)
+    pool.query('SELECT * FROM public."Package" WHERE id=$1 ', [packid], (error, results)=>{
         if (error){
             console.log(error);
             response.send(error);
@@ -294,6 +374,20 @@ const getPropertyByAll = (request, response)=>{
     });
 
 }
+
+const getPropertyPhotos = (request, response)=>{
+    var pid = requst.params.id;
+    pool.query('SELECT photo FROM public."Photos" WHERE $1', [pid], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+        }else{
+            console.log(result.rows);
+            response.send(result.rows)
+        }
+    })
+}
+
 const review = (request, response)=>{
     var rate = request.body.rating;
     var description = request.body.description;
@@ -356,9 +450,15 @@ module.exports ={
     guestBookings,
     leftToReview,
     leftToReviewOwner,
+    leftToReviewGuest,
     review,
+    guestPay,
     addProperty,
     getPropertyReview,
     getPropertyDetails,
-    placeBooking
+    placeBooking,
+    getPackage,
+    getPropertyPhotos,
+    getPropertyByOwner,
+
 }

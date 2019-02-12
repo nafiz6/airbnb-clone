@@ -39,6 +39,16 @@ var getBookings = async ()=>{
                 card_stacked.appendChild(card_content);
                 card_content.appendChild(h4);
                 card_content.appendChild(p);
+                var form = document.createElement("form");
+                form.id = "pay_"+myJson[0].booking_id;
+                var b = document.createElement("button");
+                b.className = "btn waves-effect waves-light";
+                b.onsubmit= "pay()";
+                b.innerText = "Pay Now";
+                form.appendChild(b)
+                if (myJson[i].owing>0) {
+                    card_content.appendChild(form)
+                }
                 bookings.appendChild(card_horizontal);
 
 
@@ -233,6 +243,10 @@ $(document).delegate('form', 'submit',async function(event) {
     var unindexed_array = $form.serializeArray();
     var indexed_array = {};
     var to_id = $form[0].id.split("_");
+    if (to_id[0].localeCompare("pay")==0){
+    pay(to_id[1])
+    return
+    }
 
     $.map(unindexed_array, function(n, i){
         indexed_array[n['name']] = n['value'];
@@ -278,6 +292,9 @@ $(document).delegate('form', 'submit',async function(event) {
                 console.log(to_id[0] +"_"+ data['to'])
                 f.style.display = "none";
             }
+            else{
+                ownerErr.innerText ="Error in input";
+            }
 
         })
         .catch(error =>{
@@ -288,6 +305,25 @@ $(document).delegate('form', 'submit',async function(event) {
 
 });
 
+var revErr = document.getElementById("revErr")
+var ownerErr = document.getElementById("ownerErr")
+
+
+async function pay( id){
+    var url = 'http://localhost:3000/guestpay/'+id;
+    var r = await fetch(url).then(function(response) {
+        return response.json();
+    })
+        .then(function(myJson) {
+            console.log(myJson)
+
+
+        })
+        .catch(error => {
+            console.log(error)
+        });
+
+}
 
 
 

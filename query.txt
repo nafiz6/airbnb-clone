@@ -34,19 +34,27 @@ SELECT P.id, P.name, P.no_of_guests, P.no_of_beds, O.id, O.name
 
 8. (guest books) // verify when booking //trigger to add $$$ to owner
 
-
-CREATE OR REPLACE FUNCTION bookGuest(cid DATE, cod DATE, pid INT, uname VARCHAR, pwd VARCHAR)
+CREATE OR REPLACE FUNCTION bookGuest(cid DATE, cod DATE, pid INT, uname VARCHAR, pwd VARCHAR, packid INT)
 RETURNS BOOLEAN
 AS $$
- 
+ DECLARE
+ pp INT;
 BEGIN
 	IF checkAvailibility(cid, cod, pid) AND 
 		pwd in (SELECT G.password FROM public."Guests" as G
 					WHERE uname=G.username) THEN
-		INSERT INTO public."Booking" (check_in_date, check_out_date, property_id, booked_by)
-		VALUES (cid, cod, pid, 
+		INSERT INTO public."Booking" (id,check_in_date, check_out_date, property_id, booked_by)
+		VALUES (nextval('book_id'),cid, cod, pid, 
 				(SELECT id from public."Guests" as G 
 				 WHERE uname=G.username));
+		IF (packid <> 0) THEN
+				 pp = (SELECT  price FROM public."Package"  WHERE id = packid);
+				 UPDATE public."Transaction" 
+				 SET owing = owing + pp
+				 WHERE booking_id = currval('book_id');
+		END IF;
+				
+		
 		RETURN true;
 	END IF;
 	RETURN false;
@@ -124,7 +132,8 @@ WHERE R.id in (SELECT ROP.rev_id
 			  
 			 
 
-//UNION  ETA BAKI ASE
+18. GET PROPERTY DETAILS
+
 SELECT P.name as propName, L.country, L.city, P.description, P.amenities,
 	P.price, P.no_of_guests, P.no_of_beds, O.name as owner_name,
 	O.id as owner_id, O.description
@@ -135,34 +144,6 @@ SELECT P.name as propName, L.country, L.city, P.description, P.amenities,
 	ON P.location_id = L.id
 	WHERE P.id = 8
 	
-	
-
-CREATE OR REPLACE FUNCTION retrieveALL(locationInput VARCHAR)
-RETURNS TABLE (
- id INT,
- name VARCHAR,
- description VARCHAR,
- amenities VARCHAR,
- price INT,
- no_of_guests INT,
- no_of_beds INT,
- location_id INT,
- owner_id INT,
- type INT,
- ownerName VARCHAR
-) 
-AS $$
-BEGIN
-   RETURN QUERY select prop.id, prop.name, prop.description, prop.amenities, prop.price, prop.no_of_guests, prop.no_of_beds, prop.location_id, prop.owner_id, prop.type, owner.name
-from public."Property" as prop, public."Owner" as owner
-where prop.location_id in (select loc.id
-		     from public."Location" as loc
-		     where country= locationInput) 
-			 AND prop.owner_id = owner.id;
-	
-END;
-$$ LANGUAGE plpgsql;
-
 
 
 CREATE OR REPLACE FUNCTION placeReview(r INT, d VARCHAR, t INT, idFrom INT, idTo INT)
@@ -188,3 +169,37 @@ BEGIN
 	
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+TRIGGER:
+1.
+
+CREATE OR REPLACE FUNCTION newtransaction(guest_id INTEGER,
+										  booking_id INTEGER,
+										  prop_id INTEGER,
+										 check_in_date DATE, check_out_date DATE )
+RETURNS INTEGER
+AS $$
+DECLARE
+ price INTEGER;
+ owner_id INTEGER;
+ 
+BEGIN
+   owner_id := (SELECT id FROM public."Property" AS P WHERE P.id = prop_id);
+   price := (SELECT P.price FROM public."Property" AS P
+			WHERE P.id = prop_id) * (check_out_date - check_in_date);
+   INSERT INTO public."Transaction" (owing,paid,owner_id,
+		guest_id,booking_id) VALUES (price,0,owner_id, guest_id ,booking_id);
+	RETURN 1;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
+

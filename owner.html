@@ -11,7 +11,7 @@
 <nav>
     <div class="container">
         <div class="nav-wrapper">
-            <a href="#" class="brand-logo">Insert Logo Here</a>
+            <a href="#" class="brand-logo">AirBnB</a>
 
         </div>
     </div>
@@ -22,6 +22,24 @@
         <div class="col s12 m7"  id="bookings">
 
         </div>
+
+
+    </div>
+    <div class="row">
+        <h4>Properties you own</h4>
+        <div class="col s12 m7"  id="props">
+
+        </div>
+
+
+    </div>
+
+    <div class="row">
+        <h4>Review the guest:</h4>
+        <div class="col s12 m7"  id="reviewGuest">
+
+        </div>
+
 
 
     </div>
@@ -89,6 +107,19 @@
                     <label>Select Location</label>
                 </div>
             </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <select id="package" form="addProperty" name="package">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="1">Buffet Lunch and Dinner</option>
+                        <option value="2">Tennis, Billiards, Table Tennis, Boat Riding</option>
+                        <option value="3">Unlimited Pizza at Dining</option>
+                        <option value="4">All Rides in our Amusement Park</option>
+                        <option value="5">Unlimited Coffee</option>
+                    </select>
+                    <label>Select Package</label>
+                </div>
+            </div>
 
             <button class="btn waves-effect waves-light" type="submit">Add property
 
@@ -96,6 +127,7 @@
 
 
         </form>
+    <h6 id="error"></h6>
 
 
 </div>

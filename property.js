@@ -11,9 +11,10 @@ var elemCid = document.getElementById("checkInDate")
 var elemCod = document.getElementById("checkOutDate")
 if (cid!="")elemCid.value=cid;
 if (cod!="")elemCod.value=cod;
+var check = document.getElementById("includePack")
 
 var form = document.getElementById("book")
-
+var packid;
 
 function getFormData($form){
     var unindexed_array = $form.serializeArray();
@@ -43,8 +44,18 @@ var getProperty = async ()=>{
             var propDetails = document.getElementById("propDetails");
             var ownerName = document.getElementById("ownerName");
             var ownerDescription = document.getElementById("ownerDescription");
+            var price = document.getElementById("price");
 
-
+            packid = myJson[0].packid;
+            if (packid==0 || packid==null){
+                var p = document.getElementById("ifpack");
+                p.style.display = "none"
+            }
+            else{
+                getPackage()
+            }
+            console.log(packid);
+            price.innerText = "Tk. " + myJson[0].price + "/night"
             propName.innerText = myJson[0].propname;
             propLoc.innerText = myJson[0].city+",  " + myJson[0].country;
             propDetails.innerText = myJson[0].prop_desc;
@@ -54,10 +65,30 @@ var getProperty = async ()=>{
             ownerDescription.innerText = myJson[0].owner_desc;
 
 
+
         })
         .catch(error =>  result.innerText = "No properties found");
 }
 
+
+
+var getPackage = async ()=>{
+    var url = 'http://localhost:3000/getpackage/'+packid;
+    var r = await fetch(url).then(function(response) {
+        return response.json();
+    })
+        .then(function(myJson) {
+            var packPrice = document.getElementById("packPrice");
+            var pack = document.getElementById("package");
+            packPrice.innerText = "Tk. "+ myJson[0].price
+            pack.innerText = myJson[0].description
+
+
+
+
+        })
+        .catch(error => console.log(error));
+}
 
 
 var getPropertyReview = async ()=>{
@@ -100,6 +131,10 @@ var E = document.getElementById("error");
 var submit = async ()=>{
     var data = getFormData($("#book"));
     data["id"] =propId;
+    if(check.checked){
+        data["packid"]=packid
+    }
+
     var currURL = new URL(window.location.href);
     var url = 'http://localhost:3000/book/';
     console.log(data)
