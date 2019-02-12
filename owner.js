@@ -38,12 +38,18 @@ var getBookings = async ()=>{
                 var h4 = document.createElement("h6");
                 h4.innerText = JSON.stringify(myJson[i].prop_name).replace(/['"]+/g, '');
                 var h6 = document.createElement("h6");
+                var owing = document.createElement("h6");
+                var paid = document.createElement("h6");
                 h6.innerText = "Booked By "+ JSON.stringify(myJson[i].booked_by).replace(/['"]+/g, '');
+                owing.innerText = "Owed by guest: Tk." + myJson[i].owing;
+                paid.innerText = "Paid by guest: Tk." + myJson[i].paid;
                 card_horizontal.appendChild(card_stacked);
                 card_stacked.appendChild(card_content);
                 card_content.appendChild(p);
                 card_content.appendChild(h4);
                 card_content.appendChild(h6);
+                card_content.appendChild(owing)
+                card_content.appendChild(paid)
                 bookings.appendChild(card_horizontal);
             }
 
