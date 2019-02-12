@@ -414,7 +414,7 @@ const review = (request, response)=>{
 const getPropertyByLocation = (request, response)=>{
     var loc = request.params.location;
 
-    pool.query('SELECT P.id AS prop_id, P.name as prop_name , P.no_of_beds, P.type,P.price, O.id AS owner_id, O.name as owner_name' +
+    pool.query('SELECT P.id AS prop_id, P.name as prop_name ,P.no_of_guests, P.no_of_beds, P.type,P.price, O.id AS owner_id, O.name as owner_name' +
         ' FROM public."Property" AS P' +
         ' INNER JOIN' +
         ' public."Owner" as O' +
