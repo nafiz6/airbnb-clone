@@ -128,6 +128,35 @@ var E = document.getElementById("error");
 
 
 
+
+async function getPhoto() {
+    var currURL = new URL(window.location.href);
+    var id = currURL.searchParams.get("id");
+
+    var imageContainer = document.getElementById("photos")
+    var url = 'http://localhost:3000/photos/'+id;
+    var r = await fetch(url).then(function(response) {
+        return response.json();
+    })
+        .then(function(myJson) {
+            for (var i=0;i<myJson.length;i++){
+                var img = document.createElement("img");
+                img.src = myJson[i].photo;
+                img.height = "200";
+                imageContainer.appendChild(img)
+            }
+
+
+        }).catch(error=>{
+        console.log(error);
+})
+
+}
+
+
+
+
+
 var submit = async ()=>{
     var data = getFormData($("#book"));
     data["id"] =propId;
@@ -172,5 +201,5 @@ form.addEventListener('submit', function (ev) {
 
 getProperty();
 getPropertyReview();
-
+getPhoto();
 

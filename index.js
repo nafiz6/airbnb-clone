@@ -18,6 +18,7 @@ app.get('/user/', (request,response)=>{
 })
 
 app.get('/ownerbookings/:id', db.ownerBookings)
+app.get('/photos/:id', db.getPropertyPhotos)
 app.get('/getpackage/:id', db.getPackage)
 app.get('/getpropertybyowner/:id', db.getPropertyByOwner)
 app.get('/guestpay/:id', db.guestPay)

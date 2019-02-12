@@ -353,7 +353,7 @@ const getPropertyByAll = (request, response)=>{
     console.log(loc)
     var guests = request.params.guests;
 
-    pool.query('SELECT P.id AS prop_id, P.name as prop_name , P.no_of_beds, P.type,P.price, O.id AS owner_id, O.name as owner_name' +
+    pool.query('SELECT P.id AS prop_id, P.name as prop_name , P.no_of_beds, P.no_of_guests, P.type,P.price, O.id AS owner_id, O.name as owner_name' +
         ' FROM public."Property" AS P' +
         ' INNER JOIN' +
         ' public."Owner" as O' +
@@ -376,14 +376,14 @@ const getPropertyByAll = (request, response)=>{
 }
 
 const getPropertyPhotos = (request, response)=>{
-    var pid = requst.params.id;
-    pool.query('SELECT photo FROM public."Photos" WHERE $1', [pid], (error, results)=>{
+    var pid = request.params.id;
+    pool.query('SELECT photo FROM public."Photos" WHERE property_id = $1', [pid], (error, results)=>{
         if (error){
             console.log(error);
             response.send(error);
         }else{
-            console.log(result.rows);
-            response.send(result.rows)
+            console.log(results.rows);
+            response.send(results.rows)
         }
     })
 }
