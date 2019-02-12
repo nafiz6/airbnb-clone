@@ -1,4 +1,4 @@
-Hello Somik
+Hello Nafiz
 var bookings = document.getElementById("bookings");
 
 
