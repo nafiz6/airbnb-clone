@@ -31,7 +31,7 @@ const signupOwner = (request, response)=>{
     var location = request.body.location;
     var username = request.body.username;
     var password = request.body.password;
-    pool.query('INSERT INTO public."Owner" (name, description, contact,location, username, password) VALUES ($1, $2, $3, $4, $5, $6)'
+    pool.query('INSERT INTO public."Owner" (name, description, contact,location, username, password) VALUES (TRIM($1), $2, $3, $4, TRIM($5), TRIM($6))'
         , [name, description, contact, location, username, password], (error, results) => {
         if (error) {
             console.log(error);
@@ -159,7 +159,7 @@ const guestBookings = (request, response)=>{
 const guestPay = (request, response)=>{
     var guestID = parseInt(request.params.id)
     pool.query('Update public."Transaction" ' +
-        'SET paid=owing, owing =0 WHERE booking_id=$1', [guestID], (error, results)=>{
+        'SET paid = paid + owing, owing = 0 WHERE booking_id=$1', [guestID], (error, results)=>{
         if (error){
             console.log(error);
             response.send(error);
@@ -202,6 +202,47 @@ const getPropertyReview = (request, response) =>{
         ' FROM public."ReviewOfProperty" AS ROP ' +
         ' WHERE ROP.prop_id = $1 AND G.id=ROP.guest_id)'
     , [propId], (error,  results) => {
+        if (error){
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows);
+
+        }
+    })
+}
+
+const getOwnerReview = (request, response) =>{
+    var owner = parseInt(request.params.id)
+    pool.query('SELECT R.rating, R.description, to_char(R.date, \'DD-Mon-YYYY\') as date, G.name ' +
+        'FROM public."Review" AS R, public."Guests" AS G ' +
+        'WHERE R.id in (SELECT ROO.rev_id ' +
+        ' FROM public."ReviewOfOwner" AS ROO ' +
+        ' WHERE ROO.owner_id = $1 AND G.id=ROO.guest_id)'
+    , [owner], (error,  results) => {
+        if (error){
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows);
+
+        }
+    })
+}
+
+
+const getGuestReview = (request, response) =>{
+    var guest = parseInt(request.params.id)
+    pool.query('SELECT R.rating, R.description, to_char(R.date, \'DD-Mon-YYYY\') as date, O.name ' +
+        ' FROM public."Review" AS R, public."Owner" AS O ' +
+        'WHERE R.id in (SELECT ROG.rev_id ' +
+        ' FROM public."ReviewOfGuest" AS ROG ' +
+        ' WHERE ROG.guest_id = $1 AND O.id=ROG.owner_id)'
+    , [guest], (error,  results) => {
         if (error){
             console.log(error);
             response.send(error);
@@ -388,6 +429,31 @@ const getPropertyPhotos = (request, response)=>{
     })
 }
 
+const getOwnerDetails = (request, response)=>{
+    var pid = request.params.id;
+    pool.query('SELECT name,description,contact, to_char(join_date, \'DD-Mon-YYYY\') as join_date, picture, location FROM public."Owner" WHERE id = $1', [pid], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+        }else{
+            console.log(results.rows);
+            response.send(results.rows)
+        }
+    })
+}
+const getGuestDetails = (request, response)=>{
+    var pid = request.params.id;
+    pool.query('SELECT name,description,contact, to_char(join_date, \'DD-Mon-YYYY\') as join_date, picture, location FROM public."Guests" WHERE id = $1', [pid], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+        }else{
+            console.log(results.rows);
+            response.send(results.rows)
+        }
+    })
+}
+
 const review = (request, response)=>{
     var rate = request.body.rating;
     var description = request.body.description;
@@ -444,6 +510,8 @@ module.exports ={
     signupOwner,
     loginOwner,
     loginGuest,
+    getOwnerDetails,
+    getGuestDetails,
     getPropertyByAll,
     getPropertyByLocation,
     ownerBookings,
@@ -460,5 +528,7 @@ module.exports ={
     getPackage,
     getPropertyPhotos,
     getPropertyByOwner,
+    getOwnerReview,
+    getGuestReview,
 
 }

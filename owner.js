@@ -222,7 +222,7 @@ var leftToReviewGuest = async ()=>{
 
 
 $(document).delegate('form', 'submit',async function(event) {
-    if (form.id.localeCompare("addProperty")==0)return;
+    //if (form.id.localeCompare("addProperty")==0)return;
     event.preventDefault();
     var $form = $(this);
     var unindexed_array = $form.serializeArray();

@@ -34,13 +34,19 @@ var getBookings = async ()=>{
                 var p = document.createElement("p");
                 p.innerText = "Check In Date: " + myJson[i].check_in_date + "\nCheck Out Date: " + myJson[i].check_out_date
                 var h4 = document.createElement("h6");
+                var owing = document.createElement("h6");
+                var paid = document.createElement("h6");
                 h4.innerText = JSON.stringify(myJson[i].prop_name).replace(/['"]+/g, '');
+                owing.innerText = "Owing: "+myJson[i].owing;
+                paid.innerText = "Paid: "+myJson[i].paid;
                 card_horizontal.appendChild(card_stacked);
                 card_stacked.appendChild(card_content);
                 card_content.appendChild(h4);
                 card_content.appendChild(p);
+                card_content.appendChild(owing);
+                card_content.appendChild(paid);
                 var form = document.createElement("form");
-                form.id = "pay_"+myJson[0].booking_id;
+                form.id = "pay_"+myJson[i].booking_id;
                 var b = document.createElement("button");
                 b.className = "btn waves-effect waves-light";
                 b.onsubmit= "pay()";
@@ -310,12 +316,14 @@ var ownerErr = document.getElementById("ownerErr")
 
 
 async function pay( id){
+    console.log("here"+id);
     var url = 'http://localhost:3000/guestpay/'+id;
     var r = await fetch(url).then(function(response) {
         return response.json();
     })
         .then(function(myJson) {
             console.log(myJson)
+            window.location=""
 
 
         })

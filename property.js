@@ -45,6 +45,8 @@ var getProperty = async ()=>{
             var ownerName = document.getElementById("ownerName");
             var ownerDescription = document.getElementById("ownerDescription");
             var price = document.getElementById("price");
+            var linktoprofile = document.getElementById("linkToOwnerProfile")
+            linktoprofile.href = "ownerprofile.html?id="+ myJson[0].owner_id
 
             packid = myJson[0].packid;
             if (packid==0 || packid==null){
