@@ -198,6 +198,51 @@ $$ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION payexpense(pid VARCHAR, bid VARCHAR, t INT, etype INT)
+RETURNS INTEGER
+AS $$
+DECLARE
+ revID INTEGER := nextval('rev_id'::regclass);
+BEGIN
+   IF t=1 THEN
+   		UPDATE public."Transaction" 
+		SET paid = paid + (SELECT parking_expense
+						  FROM public."Apartment" 
+						  WHERE prop_id = pid)
+		WHERE booking_id = bid;
+	ELSEIF t=2 THEN
+		UPDATE public."Transaction"
+		SET paid = paid + (SELECT activities_expense
+						   FROM public."Resort"
+						   WHERE prop_id = pid)
+		WHERE booking_id = bid;
+	ELSE 
+		IF etype = 1 THEN
+			UPDATE public."Transaction"
+			SET paid = paid + (SELECT services_expenses
+							  FROM public."Hotel"
+							  WHERE prop_id = pid)
+			WHERE booking_id = bid;
+		ELSE 
+			UPDATE public."Transaction"
+			SET paid = paid + (SELECT food_expenses 
+							  FROM public."Hotel"
+							  WHERE prop_id = pid)
+			WHERE booking_id = bid;
+		END IF;
+	END IF;
+
+   RETURN 1;
+	
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
 
 
 

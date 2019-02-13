@@ -51,10 +51,52 @@ var getBookings = async ()=>{
                 b.className = "btn waves-effect waves-light";
                 b.onsubmit= "pay()";
                 b.innerText = "Pay Now";
-                form.appendChild(b)
+                var expenseOne = document.createElement("button");
+                var expenseTwo = document.createElement("button");
+                expenseOne.className = "btn waves-effect waves-light";
+                expenseTwo.className = "btn waves-effect waves-light";
+
+                var formTwo = document.createElement("form");
+                formTwo.id = "exp" + "_" + myJson[i].prop_id +"_" + myJson[i].booking_id + "_" + myJson[i].type;
+
+                var formThree = document.createElement("form");
+                formThree.id = "expTwo" + "_" + myJson[i].prop_id +"_" + myJson[i].booking_id + "_" + myJson[i].type;
+
+
+                card_content.appendChild(form)
+                card_content.appendChild(formTwo)
+
                 if (myJson[i].owing>0) {
-                    card_content.appendChild(form)
+                    form.appendChild(b)
                 }
+                if (myJson[i].type==1){//appartment 1 resort 2 hotel 3
+                    expenseOne.innerText = "Pay Parking Expense";
+                    expenseOne.id ="pe";
+                    formTwo.appendChild(expenseOne);
+                }
+                else if (myJson[i].type==2){//appartment 1 resort 2 hotel 3
+                    expenseOne.innerText = "Pay Activities Expense";
+                    expenseOne.id ="acte";
+                    formTwo.appendChild(expenseOne);
+                }
+                else{
+                    expenseOne.innerText = "Pay Service Expense";
+                    expenseOne.id = "se";
+                    expenseTwo.innerText = "Pay Food Expense";
+                    expenseTwo.id = "fe";
+
+
+                    formTwo.appendChild(expenseOne);
+                    formThree.appendChild(expenseTwo);
+                    card_content.appendChild(formThree)
+
+
+                }
+
+
+
+
+
                 bookings.appendChild(card_horizontal);
 
 
@@ -250,8 +292,12 @@ $(document).delegate('form', 'submit',async function(event) {
     var indexed_array = {};
     var to_id = $form[0].id.split("_");
     if (to_id[0].localeCompare("pay")==0){
-    pay(to_id[1])
+    pay(to_id[1]);
     return
+    }
+    if (to_id[0].localeCompare("exp")==0 || to_id[0].localeCompare("expTwo")==0){
+        payexp(to_id[1], to_id[2], to_id[3] ,to_id[0])
+        return;
     }
 
     $.map(unindexed_array, function(n, i){
@@ -315,7 +361,7 @@ var revErr = document.getElementById("revErr")
 var ownerErr = document.getElementById("ownerErr")
 
 
-async function pay( id){
+async function pay(id){
     console.log("here"+id);
     var url = 'http://localhost:3000/guestpay/'+id;
     var r = await fetch(url).then(function(response) {
@@ -330,6 +376,25 @@ async function pay( id){
         .catch(error => {
             console.log(error)
         });
+
+}
+
+async function payexp(pid,bid, type,f){
+    if (f.localeCompare("exp")==0)var etype = 1;
+    else {var etype = 2;}
+    var url = 'http://localhost:3000/payexpense/'+pid+"/"+bid+"/" + type+"/" + etype;
+    var r = await fetch(url).then(function(response) {
+        return response.json();
+    })
+        .then(function(myJson) {
+            console.log(myJson)
+            window.location=""
+
+
+        })
+        .catch(error => {
+        console.log(error)
+});
 
 }
 

@@ -3,7 +3,7 @@ const pool = new Pool({
     host: 'localhost',
     user: 'postgres',
     password: '1234',
-    database: 'AirBnB'
+    database: 'airbnb'
 })
 
 const signupGuest = (request, response)=>{
@@ -131,12 +131,12 @@ const ownerBookings = (request, response)=>{
 const guestBookings = (request, response)=>{
     var guestId = parseInt(request.params.id)
     pool.query('SELECT B.id AS booking_id,  to_char(B.check_in_date, \'DD-Mon-YYYY\') as check_in_date, ' +
-        'to_char(B.check_out_date, \'DD-Mon-YYYY\') as check_out_date, P.name AS prop_name, P.id AS prop_id, O.id as owner_id, O.name as owner_name, T.owing, T.paid' +
+        'to_char(B.check_out_date, \'DD-Mon-YYYY\') as check_out_date, P.name AS prop_name, P.type, P.id AS prop_id, O.id as owner_id, O.name as owner_name, T.owing, T.paid' +
         ' FROM public."Booking" AS B' +
         ' INNER JOIN' +
         ' public."Property" AS P' +
         ' ON P.id = B.property_id' +
-        ' LEFT OUTER JOIN' +
+        ' INNER JOIN' +
         ' public."Transaction" AS T' +
         ' ON (T.booking_id = B.id)' +
         ' INNER JOIN' +
@@ -160,6 +160,24 @@ const guestPay = (request, response)=>{
     var guestID = parseInt(request.params.id)
     pool.query('Update public."Transaction" ' +
         'SET paid = paid + owing, owing = 0 WHERE booking_id=$1', [guestID], (error, results)=>{
+        if (error){
+            console.log(error);
+            response.send(error);
+        }
+        else{
+            console.log(results.rows)
+            response.send(results.rows)
+        }
+    })
+}
+
+
+const payExpense = (request, response)=>{
+    var pid = parseInt(request.params.pid)
+    var bid = parseInt(request.params.bid)
+    var t = parseInt(request.params.t)
+    var et = parseInt(request.params.et)
+    pool.query('SELECT * FROM  payexpense($1, $2, $3, $4)', [pid, bid, t, et], (error, results)=>{
         if (error){
             console.log(error);
             response.send(error);
@@ -530,5 +548,6 @@ module.exports ={
     getPropertyByOwner,
     getOwnerReview,
     getGuestReview,
+    payExpense
 
 }
