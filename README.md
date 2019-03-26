@@ -8,5 +8,6 @@ To run, first locally host the directory, suppose with xampp.
 Make sure Postgresql is running with proper schema.
 
 Then start node
+
     node index.js
    
