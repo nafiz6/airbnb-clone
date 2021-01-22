@@ -11,3 +11,5 @@ Then start node
 
     node index.js
    
+ERD for the project:    
+![alt text](https://github.com/nafiz6/airbnb-clone/blob/master/ERD.png)
